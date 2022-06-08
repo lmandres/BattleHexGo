@@ -36,6 +36,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
+    var cardset string = "/static/cardstux/"
+
     var player int = helper.FirstPlayer
     var imageWidth int = 320
     var imageHeight int = 550
@@ -64,8 +66,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
     pagePartHeadOpen := `
   <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <title>Battle Hex</title>
-    <link rel="shortcut icon" href="favicon.ico" />
+    <title>Battle Hex Go</title>
+    <link rel="shortcut icon" href="/static/favicon.ico" />
     <style>
         .loaderanimation {
             position: absolute;
@@ -92,6 +94,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     pagePartJSGameCode := `
 	<script type="text/javascript">
+
+        let cardset = "%s";
 	
 		let player = %d;
 		let computer = (player %% 2) + 1;
@@ -199,8 +203,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 					
 
 				if ((playerPlayCard != null) || (playerFlipCard != null)) {
-					document.getElementById("opponentPlayCardImg").src = "/static/cardstux/back.png";
-					document.getElementById("opponentFlipCardImg").src = "/static/cardstux/back.png";
+					document.getElementById("opponentPlayCardImg").src = cardset + "back.png";
+					document.getElementById("opponentFlipCardImg").src = cardset + "back.png";
 				}
 			}
 		}
@@ -238,8 +242,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 						playerPlayCard = tempCard;
 					}
 
-					document.getElementById("playerFlipCardImg").src = "/static/cardstux/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
-					document.getElementById("playerPlayCardImg").src = "/static/cardstux/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
+					document.getElementById("playerFlipCardImg").src = cardset + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
+					document.getElementById("playerPlayCardImg").src = cardset + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
 				}
 
 			} else {
@@ -263,8 +267,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 				let playerMove = getPlayerRowColumn(playerFlipCard, playerPlayCard);
 				let computerMove = getPlayerRowColumn(computerFlipCard, computerPlayCard);
 
-				document.getElementById("opponentFlipCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-				document.getElementById("opponentPlayCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+				document.getElementById("opponentFlipCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
+				document.getElementById("opponentPlayCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
 
 				if (playerMove["row"] == computerMove["row"] && playerMove["column"] == computerMove["column"]) {
 					tieBreaker();
@@ -411,8 +415,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 									playerFlipCard = null;
 									playerPlayCard = null;
 
-									document.getElementById("opponentFlipCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-									document.getElementById("opponentPlayCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+									document.getElementById("opponentFlipCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
+									document.getElementById("opponentPlayCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
 
 									computerMove = calculateComputerMove(computer, gameBoard);
 									makeCellMove(computerMove["row"], computerMove["column"], computer);
@@ -467,8 +471,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 									playerFlipCard = null;
 									playerPlayCard = null;
 
-									document.getElementById("opponentFlipCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-									document.getElementById("opponentPlayCardImg").src = "/static/cardstux/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+									document.getElementById("opponentFlipCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
+									document.getElementById("opponentPlayCardImg").src = cardset + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
 
 									computerMove = calculateComputerMove(computer, gameBoard);
 									makeCellMove(computerMove["row"], computerMove["column"], computer);
@@ -698,8 +702,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 					
 			} else if (playerFlipCard != null && playerPlayCard != null) {
 				
-				document.getElementById("playerFlipCardImg").src = "/static/cardstux/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
-				document.getElementById("playerPlayCardImg").src = "/static/cardstux/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
+				document.getElementById("playerFlipCardImg").src = cardset + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
+				document.getElementById("playerPlayCardImg").src = cardset + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
 
 				for (let lineIndex = 1; lineIndex <= indexValues.length; lineIndex++) {
 					if (deleteLine.substr(0,1) == "r") {
@@ -793,10 +797,10 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 			let voltageIndex = 0;
 			let computerMove = null;
 
-			document.getElementById("playerPlayCardImg").src = "/static/cardstux/blank.png";
-			document.getElementById("playerFlipCardImg").src = "/static/cardstux/blank.png";
-			document.getElementById("opponentPlayCardImg").src = "/static/cardstux/blank.png";
-			document.getElementById("opponentFlipCardImg").src = "/static/cardstux/blank.png";
+			document.getElementById("playerPlayCardImg").src = cardset + "blank.png";
+			document.getElementById("playerFlipCardImg").src = cardset + "blank.png";
+			document.getElementById("opponentPlayCardImg").src = cardset + "blank.png";
+			document.getElementById("opponentFlipCardImg").src = cardset + "blank.png";
 
 			for (let rowIndex = 0; rowIndex <= indexValues.length+1; rowIndex++) {
 				gameBoard.push([]);
@@ -1676,13 +1680,16 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     pagePartHeadClose := "</head>"
 
-    pagePartBody := `
+    pagePartBodyOpen := `
   <body onload="startGame();">
 
 	<div>
   		<table align="center" style="background-color: #004400">
   			<tr>
   				<td>
+`
+
+    pagePartSVGOpen := `
 					<svg
 						id="svgBoard"
 						xmlns="http://www.w3.org/2000/svg"
@@ -1691,35 +1698,17 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 						width="320"
 						height="550"
 						style="background: #004400;">
+`
+    pagePartSVGBorder := `
 							<polygon
 								points="
-									282.91973473069453,275.0
-									160.0,487.9032258064516
-									160.0,547.0430107526881
-									317.06410548922076,275.0"
-								style="fill: red; stroke: black;" />
-							<polygon
-								points="
-									37.08026526930547,275.0
-									160.0,62.096774193548384
-									160.0,2.9569892473118244
-									2.935894510779214,275.0"
-								style="fill: red; stroke: black;" />
-							<polygon
-								points="
-									282.91973473069453,275.0
-									160.0,62.096774193548384
-									160.0,2.9569892473118244
-									317.06410548922076,275.0"
-								style="fill: black; stroke: black;" />
-							<polygon
-								points="
-									37.08026526930547,275.0
-									160.0,487.9032258064516
-									160.0,547.0430107526881
-									2.935894510779214,275.0"
-								style="fill: black; stroke: black;" />
-
+								    %0.10f,%0.10f	
+								    %0.10f,%0.10f	
+								    %0.10f,%0.10f	
+								    %0.10f,%0.10f"
+								style="fill: %s; stroke: black;" />
+`
+    pagePartSVGLabels := `
 							<text
 								x="149.75668877244212"
 								y="44.354838709677416"
@@ -5556,7 +5545,13 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     fmt.Fprint(w, pagePartStart)
     fmt.Fprint(w, pagePartHeadOpen)
-    fmt.Fprintf(w, pagePartJSGameCode, player, helper.GetPlayerSuits(player), helper.GetOpponentSuits(player), xCoordStr, yCoordStr)
+    fmt.Fprintf(w, pagePartJSGameCode, cardset, player, helper.GetPlayerSuits(player), helper.GetOpponentSuits(player), xCoordStr, yCoordStr)
     fmt.Fprint(w, pagePartHeadClose)
-    fmt.Fprint(w, pagePartBody)
+    fmt.Fprint(w, pagePartBodyOpen)
+    fmt.Fprint(w, pagePartSVGOpen)
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
+    fmt.Fprint(w, pagePartSVGLabels)
 }

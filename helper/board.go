@@ -82,3 +82,26 @@ func GetCellExtendedLength(cellRadius float64) float64 {
     return cellRadius*(1+math.Sin(math.Pi/6))
 }
 
+func GetObtuseBorderXCoord(cellRadius float64, boardColumns int) float64 {
+    return ((float64(boardColumns)-1)*GetCellHalfWidth(cellRadius))
+}
+
+func GetObtuseBorderYCoord(cellRadius float64, boardColumns int) float64 {
+    return ((float64(boardColumns)-1)*GetCellExtendedLength(cellRadius))
+}
+
+func GetAcuteBorderXCoord(cellRadius float64, boardRows int) float64 {
+    return 0
+}
+
+func GetAcuteBorderYCoord(cellRadius float64, boardRows int) float64 {
+    return (float64(boardRows)-1)*(2*GetCellExtendedLength(cellRadius))
+}
+
+func GetAcuteBorderLength(cellRadius float64) float64 {
+    return (cellRadius/math.Sin(math.Pi/6))+(2*(cellRadius*(1+math.Sin(math.Pi/6))))
+}
+
+func GetObtuseBorderLength(cellRadius float64) float64 {
+    return (cellRadius/math.Sin(math.Pi/3))+(2*(cellRadius*(math.Cos(math.Pi/6))))
+}
