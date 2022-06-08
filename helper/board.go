@@ -36,6 +36,11 @@ func GetOpponentSuits(player int) string {
     return returnSuits
 }
 
+func GetBoardLabel(rowColumnIn int) string {
+    var indexValues [13]string = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+    return indexValues[rowColumnIn-1]
+}
+
 func GetCellRadius(imageWidth int, imageHeight int, boardRows int, boardColumns int, boardShape int) float64 {
 
     var cellRadius float64 = 0
@@ -104,4 +109,32 @@ func GetAcuteBorderLength(cellRadius float64) float64 {
 
 func GetObtuseBorderLength(cellRadius float64) float64 {
     return (cellRadius/math.Sin(math.Pi/3))+(2*(cellRadius*(math.Cos(math.Pi/6))))
+}
+
+func GetCellXCoord(cellRadius float64, startXCoord float64, boardRows int, boardColumns int, rowIn int, columnIn int, boardShape int) float64 {
+
+    var returnXCoord float64 = 0
+
+    switch boardShape {
+        case VerticalBoard+FirstPlayer:
+            returnXCoord = startXCoord+(float64(columnIn-rowIn)*GetCellHalfWidth(cellRadius))
+        case VerticalBoard+SecondPlayer:
+            returnXCoord = startXCoord+((float64(boardColumns-columnIn+1)-float64(boardRows-rowIn+1))*GetCellHalfWidth(cellRadius))
+    }
+
+    return returnXCoord
+}
+
+func GetCellYCoord(cellRadius float64, startYCoord float64, boardRows int, boardColumns int, rowIn int, columnIn int, boardShape int) float64 {
+
+    var returnYCoord float64 = 0
+
+    switch boardShape {
+        case VerticalBoard+FirstPlayer:
+            returnYCoord = startYCoord+((float64(columnIn-rowIn)*GetCellExtendedLength(cellRadius))+(float64(rowIn-1)*(2*GetCellExtendedLength(cellRadius))))
+        case VerticalBoard+SecondPlayer:
+            returnYCoord = startYCoord+((float64(boardColumns-columnIn+1)-float64(boardRows-rowIn+1))*GetCellExtendedLength(cellRadius))+((float64(boardRows-rowIn))*(2*GetCellExtendedLength(cellRadius)))
+    }
+
+    return returnYCoord
 }

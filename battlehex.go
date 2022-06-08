@@ -1710,20 +1710,15 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 `
     pagePartSVGLabels := `
 							<text
-								x="149.75668877244212"
-								y="44.354838709677416"
+								x="%0.10f"
+								y="%0.10f"
 								text-anchor="middle"
 								dominant-baseline="middle"
-								fill="black"
-								style="font-size:9; font-family: verdana; font-weight: bold;">RA</text>
-							<text
-								x="293.1630459582524"
-								y="292.741935483871"
-								text-anchor="middle"
-								dominant-baseline="middle"
-								fill="black"
-								style="font-size:9; font-family: verdana; font-weight: bold;">RA</text>
+								fill="%s"
+								style="font-size:9; font-family: verdana; font-weight: bold;">%s%s</text>
+`
 
+    pagePartSVGLabels2 := `
 							<text
 								x="139.51337754488424"
 								y="62.096774193548384"
@@ -5549,9 +5544,19 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprint(w, pagePartHeadClose)
     fmt.Fprint(w, pagePartBodyOpen)
     fmt.Fprint(w, pagePartSVGOpen)
+
     fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
     fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
     fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
     fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
-    fmt.Fprint(w, pagePartSVGLabels)
+
+    for i:= 1; i <= boardRows; i++ {
+        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 0, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 0, boardShape+player), "black", "R", helper.GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 14, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 14, boardShape+player), "black", "R", helper.GetBoardLabel(i))
+    }
+    for i:= 1; i <= boardColumns; i++ {
+        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 0, i, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 0, i, boardShape+player), "white", "B", helper.GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 14, i, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 14, i, boardShape+player), "white", "B", helper.GetBoardLabel(i))
+    }
+    _ = pagePartSVGLabels2
 }
