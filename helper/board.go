@@ -138,3 +138,27 @@ func GetCellYCoord(cellRadius float64, startYCoord float64, boardRows int, board
 
     return returnYCoord
 }
+
+func GetPointXCoord(cellRadius float64, cellXCoordIn float64, pointIndexIn int, boardShape int) float64 {
+
+    var returnXCoord float64 = 0
+
+    switch boardShape {
+        case VerticalBoard+FirstPlayer, VerticalBoard+SecondPlayer:
+            returnXCoord = cellXCoordIn+(cellRadius*math.Cos((float64(pointIndexIn)*math.Pi/3)+math.Pi/6))
+    }
+
+    return returnXCoord
+}
+
+func GetPointYCoord(cellRadius float64, cellYCoordIn float64, pointIndexIn int, boardShape int) float64 {
+
+    var returnYCoord float64 = 0
+
+    switch boardShape {
+        case VerticalBoard+FirstPlayer, VerticalBoard+SecondPlayer:
+            returnYCoord = cellYCoordIn+(cellRadius*math.Sin((float64(pointIndexIn)*math.Pi/3)+math.Pi/6))
+    }
+
+    return returnYCoord
+}
