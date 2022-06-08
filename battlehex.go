@@ -6,7 +6,7 @@ import (
     "net/http"
     "os"
 
-    //"battle-hex-go/helper"
+    "battle-hex-go/helper"
 )
 
 func main() {
@@ -35,12 +35,21 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/battlehex_vs_js_ai_v1.1" {
-        http.NotFound(w, r)
-        return
-    }
 
-    fmt.Fprint(w, `
+    var player int = helper.FirstPlayer
+    var imageWidth int = 320
+    var imageHeight int = 550
+    var boardRows int = 13
+    var boardColumns int = 13
+    var boardShape int = helper.VerticalBoard
+
+    var xCoordStr string = ""
+    var yCoordStr string = ""
+
+    startXCoord, startYCoord := helper.GetStartCoords(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
+    cellRadius := helper.GetCellRadius(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
+
+    pagePartStart := `
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!-- The HTML 4.01 Transitional DOCTYPE declaration-->
 <!-- above set at the top of the file will set     -->
@@ -49,9 +58,10 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 <!-- with a "Standards Mode" doctype is supported, -->
 <!-- but may lead to some differences in layout.   -->
 
-
-
 <html>
+`
+
+    pagePartHeadOpen := `
   <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <title>Battle Hex</title>
@@ -78,10 +88,13 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
     </style>
     <script type="text/javascript" src="/static/numeric-1.2.6.min.js"></script>
     <script type="text/javascript" src="/static/math.min.js"></script>
+`
+
+    pagePartJSGameCode := `
 	<script type="text/javascript">
 	
-		let player = 1;
-		let computer = (player % 2) + 1;
+		let player = %d;
+		let computer = (player %% 2) + 1;
 
 		let svgNS = "http://www.w3.org/2000/svg";
 		let svgID = "svgBoard";
@@ -94,8 +107,8 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 		let computerFlipCard = null;
 		let computerPlayCard = null;
 
-		let playerSuits = "s,d".split(",");
-		let computerSuits = "c,h".split(",");
+		let playerSuits = "%s".split(",");
+		let computerSuits = "%s".split(",");
 		let deleteLine = null;
 
 		let gameBoard = [];
@@ -111,15 +124,11 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		
 		function getXCoord(row, column) {
-
-			return 160.0+((column-row)*10.243311227557877);
-
+            return %s;
 		}
 		
 		function getYCoord(row, column) {
-
-			return 62.096774193548384+((column-row)*17.741935483870968)+((row-1)*35.483870967741936);
-
+            return %s;
 		}
 		
 		function makeCardMove(card, playerIn) {
@@ -580,18 +589,18 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
 			if (playerIn == 1) {
 				while (true) {
-					if (!traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+1) % 6);
+					if (!traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+1) %% 6);
 						incrementFunctions[startIndex]();
-						startIndex = ((startIndex+4) % 6);
-					} else if (traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+5) % 6);
-					} else if (traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+5) % 6);
-					} else if (!traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+1) % 6);
+						startIndex = ((startIndex+4) %% 6);
+					} else if (traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+5) %% 6);
+					} else if (traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+5) %% 6);
+					} else if (!traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+1) %% 6);
 					} else {
-						startIndex = ((startIndex+1) % 6);
+						startIndex = ((startIndex+1) %% 6);
 					}
 					if (gameBoardIn[currentRow][currentColumn] == 0) {
 						break;
@@ -599,16 +608,16 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			} else if (playerIn == 2) {
 				while (true) {
-					if (traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) % 6)]()) {
+					if (traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) %% 6)]()) {
 						incrementFunctions[startIndex]();
-					} else if (!traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+1) % 6);
-					} else if (traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+1) % 6);
-					} else if (!traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) % 6)]()) {
-						startIndex = ((startIndex+5) % 6);
+					} else if (!traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+1) %% 6);
+					} else if (traverseFunctions[startIndex]() && traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+1) %% 6);
+					} else if (!traverseFunctions[startIndex]() && !traverseFunctions[((startIndex+1) %% 6)]()) {
+						startIndex = ((startIndex+5) %% 6);
 					} else {
-						startIndex = ((startIndex+5) % 6);
+						startIndex = ((startIndex+5) %% 6);
 					}
 					if (gameBoardIn[currentRow][currentColumn] == 0) {
 						break;
@@ -912,7 +921,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
 			let winCount = 0;
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 	 		for (let copyIndex = 0; copyIndex < gameBoardIn.length; copyIndex++) {
 	 			copyBoard.push(Object.assign([], gameBoardIn[copyIndex]));
@@ -959,7 +968,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 			let emptyCoords = getEmptyCoords(gameBoardIn);
 			let coordCounts = [];
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			for (let initIndex = 0; initIndex < emptyCoords.length; initIndex++) {
 				coordCounts.push(0);
@@ -982,7 +991,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 						test1 = opponent;
 					}
 
-					randomBoard[emptyCoords[calcIndex2][0]][emptyCoords[calcIndex2][1]] = (randomBoard[emptyCoords[calcIndex2][0]][emptyCoords[calcIndex2][1]] % 2) + 1;
+					randomBoard[emptyCoords[calcIndex2][0]][emptyCoords[calcIndex2][1]] = (randomBoard[emptyCoords[calcIndex2][0]][emptyCoords[calcIndex2][1]] %% 2) + 1;
 
 					if (evaluateWin(playerIn, randomBoard)) {
 						test2 = playerIn;
@@ -1031,7 +1040,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 			let randomPlayer = (Math.random() < 0.5, 1, 2);
 			let populateCoords = [];
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			if (playerIn) {
 				randomPlayer = opponent;
@@ -1046,7 +1055,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 				let moveChoice = Math.floor(Math.random() * moveIndex);
 				randomBoard[populateCoords[moveChoice][0]][populateCoords[moveChoice][1]] = randomPlayer;
 				populateCoords.splice(moveChoice, 1);
-				randomPlayer = (randomPlayer % 2) + 1;
+				randomPlayer = (randomPlayer %% 2) + 1;
 			}
 
 			return randomBoard;
@@ -1282,7 +1291,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 		function moveBordersOpponent(rowIndexIn, columnIndexIn, gameStateIn, playerIn) {
 
 			let moveEval = false;
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			if (
 				0 >= rowIndexIn-1 ||
@@ -1311,7 +1320,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 		function moveFitsOpponentDiamond(rowIndexIn, columnIndexIn, gameStateIn, playerIn) {
 
 			let moveEval = false;
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			if (
 				0 >= rowIndexIn-2 ||
@@ -1433,7 +1442,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
 		function getDefensiveMoves(playerIn, gameStateIn, playerFactorsIn, opponentFactorsIn) {
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 			
 			let playerMovesReturn = [];
 
@@ -1552,7 +1561,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
 		function evaluateMoves(playerIn, gameBoardIn, playerDeltas, opponentDeltas) {
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			let gameState = [];
 
@@ -1613,7 +1622,7 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
 		function getSemiBestMoves(playerIn, gameBoardIn, playerDeltas, opponentDeltas) {
 
-			let opponent = (playerIn % 2) + 1;
+			let opponent = (playerIn %% 2) + 1;
 
 			let gameState = [];
 
@@ -1663,8 +1672,11 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	</script>
-  </head>
+`
 
+    pagePartHeadClose := "</head>"
+
+    pagePartBody := `
   <body onload="startGame();">
 
 	<div>
@@ -5524,5 +5536,27 @@ func battleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 	</div>
   </body>
 </html>
-`)
+`
+    if player == helper.FirstPlayer {
+        xCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)", startXCoord, helper.GetCellHalfWidth(cellRadius))
+    } else if player == helper.SecondPlayer {
+        xCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)", startXCoord, boardColumns, boardRows, helper.GetCellHalfWidth(cellRadius))
+    }
+
+    if player == helper.FirstPlayer {
+        yCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)+((row-1)*%0.10f)", startYCoord, helper.GetCellExtendedLength(cellRadius), 2*helper.GetCellExtendedLength(cellRadius))
+    } else if player == helper.SecondPlayer {
+        yCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)+(((%0.10f-row))*%0.10f)", startYCoord, boardColumns+1, boardRows+1, helper.GetCellExtendedLength(cellRadius), boardRows, 2*helper.GetCellExtendedLength(cellRadius))
+    }
+
+    if r.URL.Path != "/battlehex_vs_js_ai_v1.1" {
+        http.NotFound(w, r)
+        return
+    }
+
+    fmt.Fprint(w, pagePartStart)
+    fmt.Fprint(w, pagePartHeadOpen)
+    fmt.Fprintf(w, pagePartJSGameCode, player, helper.GetPlayerSuits(player), helper.GetOpponentSuits(player), xCoordStr, yCoordStr)
+    fmt.Fprint(w, pagePartHeadClose)
+    fmt.Fprint(w, pagePartBody)
 }
