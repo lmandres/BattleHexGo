@@ -4,11 +4,13 @@ import (
     "math"
 )
 
-const FirstPlayer = 1
-const SecondPlayer = 2
-const VerticalBoard = 4
-const HorizontalBoard = 8
-const DiamondBoard = 16
+const (
+    FirstPlayer = 1
+    SecondPlayer = 2
+    VerticalBoard = 4
+    HorizontalBoard = 8
+    DiamondBoard = 16
+)
 
 func GetPlayerSuits(player int) string {
 
