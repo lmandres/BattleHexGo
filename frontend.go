@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "net/http"
+    "strings"
 
     "battle-hex-go/helper"
 )
@@ -23,6 +24,9 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     var opponentMatch string
     var playerMatch string
+
+    var ranks [][]string = [][]string{{"a","2","3","4"},{"5","6","7","8"},{"9","10","j","q"},{"k"}}
+    var suits []string = strings.Split(helper.GetPlayerSuits(player), ",")
 
     if player == helper.FirstPlayer {
         opponentMatch = "Opposite"
@@ -138,14 +142,16 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                 if (playerIn == player) {
             
                     if (
-                        playerFlipCard == null ||
-                        playerPlayCard != null ||
+                        document.getElementById(card).src != "cardstux/back.png" &&
                         (
-                            playerPlayCard == null &&
-                            card.substr(0,1).toLowerCase() != playerFlipCard.substr(0,1).toLowerCase()  
+                            playerFlipCard == null ||
+                            playerPlayCard != null ||
+                            (
+                                playerPlayCard == null &&
+                                card.substr(0,1).toLowerCase() != playerFlipCard.substr(0,1).toLowerCase()  
+                            )
                         )
                     ) {
-
                         if (playerFlipCard == null) {
                             playerFlipCard = card;
                         } else if (playerPlayCard == null) {
@@ -171,6 +177,23 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                         }
 
                         displayMove();
+                    }
+
+                
+                    if (
+                        playerFlipCard != null &&
+                        playerPlayCard != null
+                    ) {
+                        if (document.getElementById("randomizeFlipInput").checked) {
+
+                            randomizeMove(player);
+                
+                            document.getElementById("playerFlipCardImg").src = document.getElementById(playerFlipCard).src;
+                            document.getElementById("playerPlayCardImg").src = document.getElementById(playerPlayCard).src;
+                        }
+                        document.getElementById("sendMove").disabled = false;
+                    } else {
+                        document.getElementById("sendMove").disabled = true;
                     }
 
                 } else {
@@ -206,12 +229,17 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             makeCardMove("r"+indexValues[row-1], playerIn);
                         }
                     }
+
+                    makeCardMove("r"+indexValues[row-1], playerIn);
+                    makeCardMove("b"+indexValues[column-1], playerIn);
+
+                } else {
+
+                    makeCardMove("r"+indexValues[row-1], playerIn);
+                    makeCardMove("b"+indexValues[column-1], playerIn);
+
+                    randomizeMove(playerIn);
                 }
-
-                makeCardMove("r"+indexValues[row-1], playerIn);
-                makeCardMove("b"+indexValues[column-1], playerIn);
-
-                randomizeMove(playerIn);
             }
         }
         
@@ -663,7 +691,28 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
         function displayMove() {
 
             let playerMove = getPlayerRowColumn(playerFlipCard, playerPlayCard);
+            
+            if (playerPlayCard == null) {
                 
+                document.getElementById("playerFlipCardImg").src = document.getElementById(playerFlipCard).src;
+                document.getElementById("playerPlayCardImg").src = cardset + "/blank.png";
+                
+                for (let cardIndex = 0; cardIndex < indexValues.length; cardIndex++) {
+                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/back.png";
+                }
+                
+            } else {
+                
+                document.getElementById("playerPlayCardImg").src = document.getElementById(playerPlayCard).src;
+                
+                for (let cardIndex = 0; cardIndex < indexValues.length; cardIndex++) {
+                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerFlipCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".png";
+                    document.getElementById(playerPlayCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerPlayCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".png";
+                    document.getElementById("b"+indexValues[cardIndex]).setAttribute("onclick", "makeCardMove('b" + indexValues[cardIndex] + "', player);");
+                    document.getElementById("r"+indexValues[cardIndex]).setAttribute("onclick", "makeCardMove('r" + indexValues[cardIndex] + "', player);");
+                }
+            }
+
             if (playerFlipCard != null && playerPlayCard == null) {
                     
                 if (playerMove["row"] != null) {
@@ -672,14 +721,20 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                         if (gameBoard[playerMove["row"]][lineIndex] == null) {
                             drawHexCell(playerMove["row"], lineIndex, null);
                             drawHexPiece(playerMove["row"], lineIndex, "cyan", "makeCellMove("+playerMove["row"]+","+lineIndex+",player);");
+                        } else {
+                            document.getElementById("b"+indexValues[lineIndex-1]).src = cardset + "/back.png";
+                            document.getElementById("b"+indexValues[lineIndex-1]).onclick = "";
                         }
                     }
                 } else if (playerMove["column"] != null) {
-                    deleteLine = "c"+playerMove["column"];
+                    deleteLine = "b"+playerMove["column"];
                     for (let lineIndex = 1; lineIndex <= indexValues.length; lineIndex++) {
                         if (gameBoard[lineIndex][playerMove["column"]] == null) {
                             drawHexCell(lineIndex, playerMove["column"], null);
                             drawHexPiece(lineIndex, playerMove["column"], "cyan", "makeCellMove("+lineIndex+","+playerMove["column"]+",player);");
+                        } else {
+                            document.getElementById("r"+indexValues[lineIndex-1]).src = cardset + "/back.png";
+                            document.getElementById("r"+indexValues[lineIndex-1]).onclick = "";
                         }
                     }
                 }
@@ -696,16 +751,15 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             let column = lineIndex;
                             drawHexCell(row, column, "makeCellMove("+row+","+column+",player);");
                         }
-                    } else if (deleteLine.substr(0,1) == "c") {
+                    } else if (deleteLine.substr(0,1) == "b") {
                         if (gameBoard[lineIndex][deleteLine.substr(1,deleteLine.length-1)] == null) {
                             let row = lineIndex;
-                            let column = deleteLine.substr;(1,deleteLine.length-1)
+                            let column = deleteLine.substr(1,deleteLine.length-1)
                             drawHexCell(row, column, "makeCellMove("+row+","+column+",player);");
                         }
                     }
                 }
 
-                console.log("Hello?");
                 drawHexCell(playerMove["row"], playerMove["column"], null);
                 drawHexPiece(playerMove["row"], playerMove["column"], "cyan", "sendPlayerMove();");
             }
@@ -731,7 +785,6 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
             pointsStr += " "
             pointsStr += (xCoord+(10.243311227557879))+","+(yCoord+(5.913978494623652));
 
-        
             hexObj.setAttribute("points", pointsStr);
 
             if (onclick) {
@@ -845,14 +898,13 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
             for (let setIndex = 0; setIndex < computerMoveSets.length; setIndex++) {
                 if (computerMoveSets[setIndex]) {
                     let currentProbability = testUsingMonteCarlo(playerIn, gameBoardIn, computerMoveSets[setIndex]["row"], computerMoveSets[setIndex]["column"]);
+                    console.log(setIndex, computerMoveSets[setIndex]["row"], computerMoveSets[setIndex]["column"], currentProbability);
                     if (currentProbability > maxProbability) {
                         maxProbability = currentProbability;
                         maxIndex = setIndex;
                     }
                 }
             }
-
-            console.log(maxIndex, computerMoveSets[maxIndex]["row"], computerMoveSets[maxIndex]["column"], maxProbability);
 
             returnCoords = {
                 "row": computerMoveSets[maxIndex]["row"],
@@ -897,6 +949,15 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
             if (voltageBoardVectors[1].length && voltageBoardVectors[2].length) {
                 computerMoves = getSemiBestMoves(playerIn, gameBoardIn, calculateVoltageDeltas(voltageBoardVectors[1]), calculateVoltageDeltas(voltageBoardVectors[2]));
+            }
+
+            if (computerMoves.length == 0) {
+                let moveDict = {
+                    "row": 7,
+                    "column": 7,
+                    "weight": 1
+                };
+                computerMoves.push(moveDict);
             }
 
             return computerMoves;
@@ -1712,7 +1773,7 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             />
 `
 
-    pagePartBodyClose := `
+    pagePartPlayerControls := `
                     </svg>
                 </td>
                 <td style="text-align: center;">
@@ -1728,7 +1789,12 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                                 <img id="opponentPlayCardImg" src="%s/blank.png" width="54" height="72"><br />
                             </div>
                         </td>
-                        <td></td>
+                        <td rowspan="2">
+                            <a style="color: white;" href="http://www.thegamecrafter.com/games/battle-hex">Link to instructions.</a><br />
+                            <input id="newGame" type="button" value="New Game" onclick="startGame();" /><br />
+                            <input id="sendMove" type="button" value="Send Move" disabled="disabled" onclick="sendPlayerMove();" /><br />
+                            <input id="randomizeFlipInput" type="checkbox" /> <span style="color: white;">Randomize Flip</span>
+                        </td>
                     </tr>
                     <tr>
                         <td style="text-align: right;">
@@ -1738,11 +1804,14 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             <img id="playerFlipCardImg" src="%s/blank.png" width="54" height="72">
                             <img id="playerPlayCardImg" src="%s/blank.png" width="54" height="72"><br />
                         </td>
-                        <td>
-                            <a style="color: white;" href="http://www.thegamecrafter.com/games/battle-hex">Link to instructions.</a><br />
-                            <input id="newGame" type="button" value="New Game" onclick="startGame();" /><br />
-                        </td>
                     </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center; color: white;">Black</td>
+                        <td colspan="2" style="text-align: center; color: white;">Red</td>
+                    </tr>
+`
+
+    pagePartBodyClose := `
                 </table>
                 </td>
             </tr>
@@ -1799,5 +1868,27 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
         }
     }
             
-    fmt.Fprintf(w, pagePartBodyClose, opponentMatch, cardset, cardset, playerMatch, cardset, cardset)
+    fmt.Fprintf(w, pagePartPlayerControls, opponentMatch, cardset, cardset, playerMatch, cardset, cardset)
+
+    for i := 0; i < len(ranks); i++ {
+        fmt.Fprint(w, "                    <tr>\n")
+        for j := 0; j < len(suits); j++ {
+            fmt.Fprint(w, "                        <td colspan=\"2\" style=\"text-align: center;\">\n")
+            var suit string = suits[j]
+            var line string = ""
+
+            if suit == "c" || suit == "s" {
+                line = "b"
+            } else if suit == "d" || suit == "h" {
+                line = "r"
+            }
+
+            for k := 0; k < len(ranks[i]); k++ {
+                fmt.Fprintf(w, "                            <img id=\"%s%s\" src=\"%s/%s%s.png\" width=\"54\" height=\"72\" onclick=\"makeCardMove('%s%s', player);\">\n", line, ranks[i][k], cardset, suit, ranks[i][k], line, ranks[i][k])
+            }
+            fmt.Fprint(w, "                        </td>\n")
+        }
+        fmt.Fprint(w, "                    </tr>\n")
+    }
+    fmt.Fprint(w, pagePartBodyClose)
 }
