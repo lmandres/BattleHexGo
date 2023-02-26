@@ -1,21 +1,20 @@
 package main
 
-
 import (
     "crypto/rand"
     "encoding/base64"
-    "encoding/json"
-    "fmt"
+    //"encoding/json"
+    //"fmt"
     "io"
-    "io/ioutil"
+    //"io/ioutil"
     "log"
     "net/http"
     "os"
     "time"
 
-    "github.com/coreos/go-oidc/v3/oidc"
-    "golang.org/x/net/context"
-    "golang.org/x/oauth2"
+    //"github.com/coreos/go-oidc/v3/oidc"
+    //"golang.org/x/net/context"
+    //"golang.org/x/oauth2"
 )
 
 type Secret struct {
@@ -34,6 +33,7 @@ type Web struct {
 
 func main() {
 
+    /*
     var secret Secret
 
     ctx := context.Background()
@@ -140,6 +140,7 @@ func main() {
         }
         w.Write(data)
     })
+    */
 
     http.HandleFunc("/battlehex_vs_js_ai_v1.1", BattleHexJSHandler)
 

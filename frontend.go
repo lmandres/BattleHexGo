@@ -10,7 +10,7 @@ import (
 
 func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
-    var cardset string = "/static/cardstux"
+    var cardset string = "/static/cards"
 
     var player int = helper.FirstPlayer
     var imageWidth int = 320
@@ -142,7 +142,7 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                 if (playerIn == player) {
             
                     if (
-                        document.getElementById(card).src != "cardstux/back.png" &&
+                        document.getElementById(card).src != "cardstux/back.svg" &&
                         (
                             playerFlipCard == null ||
                             playerPlayCard != null ||
@@ -210,8 +210,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                     
 
                 if ((playerPlayCard != null) || (playerFlipCard != null)) {
-                    document.getElementById("opponentPlayCardImg").src = cardset + "/back.png";
-                    document.getElementById("opponentFlipCardImg").src = cardset + "/back.png";
+                    document.getElementById("opponentPlayCardImg").src = cardset + "/back.svg";
+                    document.getElementById("opponentFlipCardImg").src = cardset + "/back.svg";
                 }
             }
         }
@@ -254,8 +254,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                         playerPlayCard = tempCard;
                     }
 
-                    document.getElementById("playerFlipCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
-                    document.getElementById("playerPlayCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
+                    document.getElementById("playerFlipCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".svg";
+                    document.getElementById("playerPlayCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".svg";
                 }
 
             } else {
@@ -279,8 +279,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                 let playerMove = getPlayerRowColumn(playerFlipCard, playerPlayCard);
                 let computerMove = getPlayerRowColumn(computerFlipCard, computerPlayCard);
 
-                document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-                document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+                document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".svg";
+                document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".svg";
 
                 if (playerMove["row"] == computerMove["row"] && playerMove["column"] == computerMove["column"]) {
                     tieBreaker();
@@ -427,8 +427,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                                     playerFlipCard = null;
                                     playerPlayCard = null;
 
-                                    document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-                                    document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+                                    document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".svg";
+                                    document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".svg";
 
                                     computerMove = calculateComputerMove(computer, gameBoard);
                                     makeCellMove(computerMove["row"], computerMove["column"], computer);
@@ -483,8 +483,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                                     playerFlipCard = null;
                                     playerPlayCard = null;
 
-                                    document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".png";
-                                    document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".png";
+                                    document.getElementById("opponentFlipCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerFlipCard.substr(0, 1))] + computerFlipCard.substr(1) + ".svg";
+                                    document.getElementById("opponentPlayCardImg").src = cardset + "/" + computerSuits["b,r".split(",").indexOf(computerPlayCard.substr(0, 1))] + computerPlayCard.substr(1) + ".svg";
 
                                     computerMove = calculateComputerMove(computer, gameBoard);
                                     makeCellMove(computerMove["row"], computerMove["column"], computer);
@@ -695,10 +695,10 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
             if (playerPlayCard == null) {
                 
                 document.getElementById("playerFlipCardImg").src = document.getElementById(playerFlipCard).src;
-                document.getElementById("playerPlayCardImg").src = cardset + "/blank.png";
+                document.getElementById("playerPlayCardImg").src = cardset + "/blank.svg";
                 
                 for (let cardIndex = 0; cardIndex < indexValues.length; cardIndex++) {
-                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/back.png";
+                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/back.svg";
                 }
                 
             } else {
@@ -706,8 +706,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                 document.getElementById("playerPlayCardImg").src = document.getElementById(playerPlayCard).src;
                 
                 for (let cardIndex = 0; cardIndex < indexValues.length; cardIndex++) {
-                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerFlipCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".png";
-                    document.getElementById(playerPlayCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerPlayCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".png";
+                    document.getElementById(playerFlipCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerFlipCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".svg";
+                    document.getElementById(playerPlayCard.substr(0,1).toLowerCase()+indexValues[cardIndex]).src = cardset + "/" + playerSuits.join(",").substr("b,r".indexOf(playerPlayCard.substr(0,1).toLowerCase()),1)+indexValues[cardIndex]+".svg";
                     document.getElementById("b"+indexValues[cardIndex]).setAttribute("onclick", "makeCardMove('b" + indexValues[cardIndex] + "', player);");
                     document.getElementById("r"+indexValues[cardIndex]).setAttribute("onclick", "makeCardMove('r" + indexValues[cardIndex] + "', player);");
                 }
@@ -722,7 +722,7 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             drawHexCell(playerMove["row"], lineIndex, null);
                             drawHexPiece(playerMove["row"], lineIndex, "cyan", "makeCellMove("+playerMove["row"]+","+lineIndex+",player);");
                         } else {
-                            document.getElementById("b"+indexValues[lineIndex-1]).src = cardset + "/back.png";
+                            document.getElementById("b"+indexValues[lineIndex-1]).src = cardset + "/back.svg";
                             document.getElementById("b"+indexValues[lineIndex-1]).onclick = "";
                         }
                     }
@@ -733,7 +733,7 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             drawHexCell(lineIndex, playerMove["column"], null);
                             drawHexPiece(lineIndex, playerMove["column"], "cyan", "makeCellMove("+lineIndex+","+playerMove["column"]+",player);");
                         } else {
-                            document.getElementById("r"+indexValues[lineIndex-1]).src = cardset + "/back.png";
+                            document.getElementById("r"+indexValues[lineIndex-1]).src = cardset + "/back.svg";
                             document.getElementById("r"+indexValues[lineIndex-1]).onclick = "";
                         }
                     }
@@ -741,8 +741,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                     
             } else if (playerFlipCard != null && playerPlayCard != null) {
                 
-                document.getElementById("playerFlipCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".png";
-                document.getElementById("playerPlayCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".png";
+                document.getElementById("playerFlipCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerFlipCard.substr(0, 1))] + playerFlipCard.substr(1) + ".svg";
+                document.getElementById("playerPlayCardImg").src = cardset + "/" + playerSuits["b,r".split(",").indexOf(playerPlayCard.substr(0, 1))] + playerPlayCard.substr(1) + ".svg";
 
                 for (let lineIndex = 1; lineIndex <= indexValues.length; lineIndex++) {
                     if (deleteLine.substr(0,1) == "r") {
@@ -834,10 +834,10 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
             let voltageIndex = 0;
             let computerMove = null;
 
-            document.getElementById("playerPlayCardImg").src = cardset + "/blank.png";
-            document.getElementById("playerFlipCardImg").src = cardset + "/blank.png";
-            document.getElementById("opponentPlayCardImg").src = cardset + "/blank.png";
-            document.getElementById("opponentFlipCardImg").src = cardset + "/blank.png";
+            document.getElementById("playerPlayCardImg").src = cardset + "/blank.svg";
+            document.getElementById("playerFlipCardImg").src = cardset + "/blank.svg";
+            document.getElementById("opponentPlayCardImg").src = cardset + "/blank.svg";
+            document.getElementById("opponentFlipCardImg").src = cardset + "/blank.svg";
 
             for (let rowIndex = 0; rowIndex <= indexValues.length+1; rowIndex++) {
                 gameBoard.push([]);
@@ -1785,8 +1785,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                         <td colspan="2">
                             <div style="position: relative;">
                                 <div id="loader"></div>
-                                <img id="opponentFlipCardImg" src="%s/blank.png" width="54" height="72">
-                                <img id="opponentPlayCardImg" src="%s/blank.png" width="54" height="72"><br />
+                                <img id="opponentFlipCardImg" src="%s/blank.svg" width="54" height="72">
+                                <img id="opponentPlayCardImg" src="%s/blank.svg" width="54" height="72"><br />
                             </div>
                         </td>
                         <td rowspan="2">
@@ -1801,8 +1801,8 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
                             <span style="color: white;">%s</span>
                         </td>
                         <td colspan="2">
-                            <img id="playerFlipCardImg" src="%s/blank.png" width="54" height="72">
-                            <img id="playerPlayCardImg" src="%s/blank.png" width="54" height="72"><br />
+                            <img id="playerFlipCardImg" src="%s/blank.svg" width="54" height="72">
+                            <img id="playerPlayCardImg" src="%s/blank.svg" width="54" height="72"><br />
                         </td>
                     </tr>
                     <tr>
@@ -1884,7 +1884,7 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
             }
 
             for k := 0; k < len(ranks[i]); k++ {
-                fmt.Fprintf(w, "                            <img id=\"%s%s\" src=\"%s/%s%s.png\" width=\"54\" height=\"72\" onclick=\"makeCardMove('%s%s', player);\">\n", line, ranks[i][k], cardset, suit, ranks[i][k], line, ranks[i][k])
+                fmt.Fprintf(w, "                            <img id=\"%s%s\" src=\"%s/%s%s.svg\" width=\"54\" height=\"72\" onclick=\"makeCardMove('%s%s', player);\">\n", line, ranks[i][k], cardset, suit, ranks[i][k], line, ranks[i][k])
             }
             fmt.Fprint(w, "                        </td>\n")
         }
