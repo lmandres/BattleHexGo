@@ -12,6 +12,8 @@ import (
     "os"
     "time"
 
+    "battle-hex-go/helper"
+
     //"github.com/coreos/go-oidc/v3/oidc"
     //"golang.org/x/net/context"
     //"golang.org/x/oauth2"
@@ -34,7 +36,7 @@ type Web struct {
 func main() {
 
     fs := http.FileServer(http.Dir("./static"))
-    http.HandleFunc("/battlehex_vs_js_ai_v1.1", BattleHexJSHandler)
+    http.HandleFunc("/battlehex_vs_js_ai_v1.1", helper.BattleHexJSHandler)
     http.Handle("/static/", http.StripPrefix("/static/", fs))
 
     port :=  os.Getenv("PORT")

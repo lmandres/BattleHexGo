@@ -1,23 +1,21 @@
-package main
+package helper
 
 import (
     "fmt"
     "net/http"
     "strings"
-
-    "battle-hex-go/helper"
 )
 
 func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     var cardset string = "/static/cards"
 
-    var player int = helper.FirstPlayer
+    var player int = FirstPlayer
     var imageWidth int = 320
     var imageHeight int = 550
     var boardRows int = 13
     var boardColumns int = 13
-    var boardShape int = helper.VerticalBoard
+    var boardShape int = VerticalBoard
 
     var xCoordStr string = ""
     var yCoordStr string = ""
@@ -26,18 +24,18 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
     var playerMatch string
 
     var ranks [][]string = [][]string{{"a","2","3","4"},{"5","6","7","8"},{"9","10","j","q"},{"k"}}
-    var suits []string = strings.Split(helper.GetPlayerSuits(player), ",")
+    var suits []string = strings.Split(GetPlayerSuits(player), ",")
 
-    if player == helper.FirstPlayer {
+    if player == FirstPlayer {
         opponentMatch = "Opposite"
         playerMatch = "Same"
-    } else if player == helper.SecondPlayer {
+    } else if player == SecondPlayer {
         opponentMatch = "Same"
         playerMatch = "Opposite"
     }
 
-    startXCoord, startYCoord := helper.GetStartCoords(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
-    cellRadius := helper.GetCellRadius(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
+    startXCoord, startYCoord := GetStartCoords(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
+    cellRadius := GetCellRadius(imageWidth, imageHeight, boardRows, boardColumns, boardShape+player)
 
     pagePartStart := `
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -1820,16 +1818,16 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
   </body>
 </html>
 `
-    if player == helper.FirstPlayer {
-        xCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)", startXCoord, helper.GetCellHalfWidth(cellRadius))
-    } else if player == helper.SecondPlayer {
-        xCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)", startXCoord, boardColumns, boardRows, helper.GetCellHalfWidth(cellRadius))
+    if player == FirstPlayer {
+        xCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)", startXCoord, GetCellHalfWidth(cellRadius))
+    } else if player == SecondPlayer {
+        xCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)", startXCoord, boardColumns, boardRows, GetCellHalfWidth(cellRadius))
     }
 
-    if player == helper.FirstPlayer {
-        yCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)+((row-1)*%0.10f)", startYCoord, helper.GetCellExtendedLength(cellRadius), 2*helper.GetCellExtendedLength(cellRadius))
-    } else if player == helper.SecondPlayer {
-        yCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)+(((%0.10f-row))*%0.10f)", startYCoord, boardColumns+1, boardRows+1, helper.GetCellExtendedLength(cellRadius), boardRows, 2*helper.GetCellExtendedLength(cellRadius))
+    if player == FirstPlayer {
+        yCoordStr = fmt.Sprintf("%0.10f+((column-row)*%0.10f)+((row-1)*%0.10f)", startYCoord, GetCellExtendedLength(cellRadius), 2*GetCellExtendedLength(cellRadius))
+    } else if player == SecondPlayer {
+        yCoordStr = fmt.Sprintf("%0.10f+(((%0.10f-column)-(%0.10f-row))*%0.10f)+(((%0.10f-row))*%0.10f)", startYCoord, boardColumns+1, boardRows+1, GetCellExtendedLength(cellRadius), boardRows, 2*GetCellExtendedLength(cellRadius))
     }
 
     if r.URL.Path != "/battlehex_vs_js_ai_v1.1" {
@@ -1839,30 +1837,30 @@ func BattleHexJSHandler(w http.ResponseWriter, r *http.Request) {
 
     fmt.Fprint(w, pagePartStart)
     fmt.Fprint(w, pagePartHeadOpen)
-    fmt.Fprintf(w, pagePartJSGameCode, cardset, player, helper.GetPlayerSuits(player), helper.GetOpponentSuits(player), xCoordStr, yCoordStr)
+    fmt.Fprintf(w, pagePartJSGameCode, cardset, player, GetPlayerSuits(player), GetOpponentSuits(player), xCoordStr, yCoordStr)
     fmt.Fprint(w, pagePartHeadClose)
     fmt.Fprint(w, pagePartBodyOpen)
     fmt.Fprint(w, pagePartSVGOpen)
 
-    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
-    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
-    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-helper.GetAcuteBorderLength(cellRadius), startXCoord+helper.GetObtuseBorderXCoord(cellRadius, boardColumns)+helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
-    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+helper.GetAcuteBorderYCoord(cellRadius, boardRows)+helper.GetAcuteBorderLength(cellRadius), startXCoord-helper.GetObtuseBorderXCoord(cellRadius, boardColumns)-helper.GetObtuseBorderLength(cellRadius), startYCoord+helper.GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+GetAcuteBorderYCoord(cellRadius, boardRows)+GetAcuteBorderLength(cellRadius), startXCoord+GetObtuseBorderXCoord(cellRadius, boardColumns)+GetObtuseBorderLength(cellRadius), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-GetAcuteBorderLength(cellRadius), startXCoord-GetObtuseBorderXCoord(cellRadius, boardColumns)-GetObtuseBorderLength(cellRadius), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), "red")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord+GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord, startXCoord, startYCoord-GetAcuteBorderLength(cellRadius), startXCoord+GetObtuseBorderXCoord(cellRadius, boardColumns)+GetObtuseBorderLength(cellRadius), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
+    fmt.Fprintf(w, pagePartSVGBorder, startXCoord-GetObtuseBorderXCoord(cellRadius, boardColumns), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), startXCoord, startYCoord+GetAcuteBorderYCoord(cellRadius, boardRows), startXCoord, startYCoord+GetAcuteBorderYCoord(cellRadius, boardRows)+GetAcuteBorderLength(cellRadius), startXCoord-GetObtuseBorderXCoord(cellRadius, boardColumns)-GetObtuseBorderLength(cellRadius), startYCoord+GetObtuseBorderYCoord(cellRadius, boardColumns), "black")
 
     for i:= 1; i <= boardRows; i++ {
-        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 0, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 0, boardShape+player), "black", "R", helper.GetBoardLabel(i))
-        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 14, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 14, boardShape+player), "black", "R", helper.GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 0, boardShape+player), GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 0, boardShape+player), "black", "R", GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, 14, boardShape+player), GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, 14, boardShape+player), "black", "R", GetBoardLabel(i))
     }
     for i:= 1; i <= boardColumns; i++ {
-        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 0, i, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 0, i, boardShape+player), "white", "B", helper.GetBoardLabel(i))
-        fmt.Fprintf(w, pagePartSVGLabels, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 14, i, boardShape+player), helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 14, i, boardShape+player), "white", "B", helper.GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 0, i, boardShape+player), GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 0, i, boardShape+player), "white", "B", GetBoardLabel(i))
+        fmt.Fprintf(w, pagePartSVGLabels, GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, 14, i, boardShape+player), GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, 14, i, boardShape+player), "white", "B", GetBoardLabel(i))
     }
 
     for i:= 1; i <= boardRows; i++ {
         for j:= 1; j <= boardColumns; j++ {
             fmt.Fprint(w, pagePartSVGCellOpen)
             for k:= 0; k < 6; k++ {
-                fmt.Fprintf(w, "                                    %0.10f,%0.10f\n", helper.GetPointXCoord(cellRadius, helper.GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, j, boardShape+player), k, boardShape+player), helper.GetPointYCoord(cellRadius, helper.GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, j, boardShape+player), k, boardShape+player))
+                fmt.Fprintf(w, "                                    %0.10f,%0.10f\n", GetPointXCoord(cellRadius, GetCellXCoord(cellRadius, startXCoord, boardRows, boardColumns, i, j, boardShape+player), k, boardShape+player), GetPointYCoord(cellRadius, GetCellYCoord(cellRadius, startYCoord, boardRows, boardColumns, i, j, boardShape+player), k, boardShape+player))
             }
             fmt.Fprintf(w, pagePartSVGCellClose, i, j)
         }
