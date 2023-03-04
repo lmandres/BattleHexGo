@@ -3,7 +3,8 @@ module battle-hex-go
 go 1.16
 
 require (
-	github.com/coreos/go-oidc/v3 v3.2.0 // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/oauth2 v0.0.0-20220608161450-d0670ef3b1eb // indirect
+	cloud.google.com/go/compute/metadata v0.2.2
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 )
+
+require cloud.google.com/go/compute v1.12.1 // indirect
