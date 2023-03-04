@@ -3,7 +3,8 @@ module battle-hex-go
 go 1.16
 
 require (
+	cloud.google.com/go/firestore v1.9.0
+	github.com/GoogleCloudPlatform/firestore-gorilla-sessions v0.1.0
 	github.com/coreos/go-oidc/v3 v3.2.0 // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/oauth2 v0.0.0-20220608161450-d0670ef3b1eb // indirect
+	github.com/gorilla/sessions v1.2.1
 )
